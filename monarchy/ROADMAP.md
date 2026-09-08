@@ -7,9 +7,10 @@ Phase numbering here supersedes the brief. Each phase has a "done when" so it ca
 ## Phase 0 — Repo and VM baseline
 
 - [x] Public fork `richardjr/monarchy` of `omacom/omarchy`; `main` based on tag `v4.0.2`, the exact commit the installed 4.0.2 packages were built from.
-- [ ] VM stack on the dev machine (see [`DECISIONS.md`](DECISIONS.md) open items). Install stock Omarchy 4.0.2 from the official ISO into a VM; snapshot it as `stock-4.0.2` before touching anything.
-- [ ] In the VM: clone this repo, `omarchy dev link ~/monarchy`, reboot. `omarchy version` must print `dev (<sha>)`; `./test/all` must be green; the desktop must be indistinguishable from stock.
-- [ ] Screenshot loop: `omarchy capture screenshot fullscreen save` inside the VM, pulled to the host for inspection.
+- [x] VM stack chosen and scripted: libvirt + virt-manager, `monarchy/vm/create.sh`, runbook in [`vm/README.md`](vm/README.md) (D007). Stock 4.0.2 installed twice from the official ISO on the laptop, proving the script.
+- [ ] Per dev machine (laptop, desktop): run [`vm/README.md`](vm/README.md) sections 1 to 4 through to the `stock-4.0.2` restore point. Laptop status on 2026-09-08: VM installed, guest bootstrap not yet run.
+- [ ] In the VM: `omarchy dev link ~/monarchy` over the share (runbook section 5). `omarchy version` must print `dev (<sha>)`; `./test/all` must be green; the desktop must be indistinguishable from stock.
+- [ ] Screenshot loop: `omarchy capture screenshot fullscreen save` inside the VM, copied to the host for inspection (runbook section 6).
 - [ ] Prove the upstream merge path once: merge the next upstream tag into `main` in a scratch branch and run the tests.
 
 Done when the edit → push → pull-in-VM → `omarchy-restart-shell` loop takes under a minute and the dev-linked VM behaves exactly like stock.

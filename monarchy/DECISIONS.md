@@ -46,8 +46,17 @@ Dated, append-only. Newest at the bottom. Each entry: context, decision, consequ
 
 **Decision.** Do not pin. Revisit at phase 4.
 
+## 2026-09-08 — D007: libvirt + virt-manager as the VM stack
+
+**Context.** The brief allowed quickemu or virt-manager. quickemu is AUR-only; libvirt, virt-manager, QEMU and edk2-ovmf are all in `extra`, libvirt gives storage-pool clones, virtiofs sharing and a GUI console, and the upstream ISO repo's own QEMU harness still works alongside it.
+
+**Decision.** libvirt system instance with virt-manager for the console. One VM, `monarchy-dev`, defined by `monarchy/vm/create.sh`; full runbook in `monarchy/vm/README.md`.
+
+**Consequences.** Three host-side facts had to be worked around and are now scripted or documented: Omarchy's ufw drops libvirt guests' DHCP unless `ufw allow in on virbr0` is added; stock Omarchy ignores the ACPI power button, so the guest bootstrap adds a VM-only logind override; Arch's edk2 has only raw firmware descriptors, so the NVRAM is raw and restore points are volume clones rather than libvirt internal snapshots. SPICE GL is kept for a usable Hyprland, at the cost of host-side `virsh screenshot`.
+
+**Alternatives.** quickemu (AUR, less control over devices); raw QEMU scripts (no snapshots or GUI without extra work).
+
 ## Open
 
-- VM stack on the dev machine: libvirt + virt-manager from `extra` (snapshots, virtiofs share; the ISO repo's QEMU scripts for ISO tests) versus quickemu from the AUR.
 - Monarch's first non-coding capabilities beyond the read-only set in the roadmap.
 - Font for Phosphor.
