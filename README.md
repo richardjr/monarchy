@@ -1,3 +1,11 @@
+# Monarchy
+
+Monarchy is a retro sci-fi, bridge-console spin of [Omarchy](https://omarchy.org) with an integrated assistant called Monarch. It is a fork of [omacom/omarchy](https://github.com/omacom/omarchy): `main` tracks upstream release tags and layers Monarchy's layout, themes and assistant on top, run as a dev-linked checkout over the stock Omarchy packages.
+
+Start with the [brief](monarchy/BRIEF.md), the [roadmap](monarchy/ROADMAP.md) and the [decision log](monarchy/DECISIONS.md). Everything below this line is the upstream Omarchy README, kept intact so merges stay clean.
+
+---
+
 # Omarchy
 
 Omarchy is a beautiful, modern & opinionated Linux distribution by DHH.
