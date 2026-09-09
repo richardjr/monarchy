@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# omarchy:summary=Switch the bar between Monarchy's bridge console and the stock Omarchy bar
+# omarchy:args=[on|off|--status]
+# omarchy:examples=omarchy toggle bridge | omarchy toggle bridge off
+
+# monarchy: the bridge console (shell/plugins/bridge, id monarchy.bridge) is
+# selected per user in ~/.config/omarchy/shell.json, which is canonical once it
+# exists. The shipped config/omarchy/shell.json stays stock so upstream's tests
+# and migrations keep their assumptions; this command writes the bridge's bar
+# block into the user's file instead, and can put the stock block back.
+
+CONFIG_DIR="$HOME/.config/omarchy"
+CONFIG="$CONFIG_DIR/shell.json"
+STOCK="$OMARCHY_PATH/config/omarchy/shell.json"
+BRIDGE_ID="monarchy.bridge"
+
+bridge_bar='{
+  "id": "monarchy.bridge",
+  "position": "left",
+  "transparent": false,
+  "centerAnchor": "",
+  "layout": {
+    "left": [
+      { "id": "monarchy.focus-tab" },
+      { "id": "monarchy.header" },
+      { "id": "omarchy.clock", "format": "dddd HH:mm", "formatAlt": "d MMMM '"'"'W'"'"'ww yyyy", "verticalFormat": "HH:mm", "verticalFormatAlt": "ddd d MMM" },
+      { "id": "monarchy.tabs" }
+    ],
+    "center": [],
+    "right": [
+      { "id": "omarchy.indicators" },
+      { "id": "omarchy.system-update" },
+      { "id": "omarchy.tray" },
+      { "id": "omarchy.agents" },
+      { "id": "omarchy.bluetooth" },
+      { "id": "omarchy.network" },
+      { "id": "omarchy.audio" },
+      { "id": "omarchy.monitor" },
+      { "id": "omarchy.power" }
+    ]
+  }
+}'
+
+current_id() {
+  [[ -f $CONFIG ]] || { echo ""; return; }
+  jq -r '.bar.id // ""' "$CONFIG" 2>/dev/null
+}
+
+enabled() {
+  [[ $(current_id) == "$BRIDGE_ID" ]]
+}
+
+write_config() {
+  local filter="$1" tmp
+  mkdir -p "$CONFIG_DIR"
+  [[ -f $CONFIG ]] || cp "$STOCK" "$CONFIG"
+  tmp=$(mktemp "$CONFIG_DIR/shell.json.XXXXXX") || exit 1
+  if jq --argjson bridge "$bridge_bar" --slurpfile stock "$STOCK" "$filter" "$CONFIG" >"$tmp"; then
+    mv "$tmp" "$CONFIG"
+  else
+    rm -f "$tmp"
+    echo "Error: could not update $CONFIG" >&2
+    exit 1
+  fi
+}
+
+turn_on() {
+  if enabled; then
+    echo "Bridge console already selected."
+    return
+  fi
+  write_config '.bar = $bridge'
+  echo "Bridge console selected. The shell picks up shell.json on its own."
+}
+
+turn_off() {
+  if ! enabled; then
+    echo "Stock bar already selected."
+    return
+  fi
+  write_config '.bar = $stock[0].bar'
+  echo "Stock Omarchy bar restored."
+}
+
+case "${1:-}" in
+  on) turn_on ;;
+  off) turn_off ;;
+  --status) jq -cn --argjson enabled "$(enabled && echo true || echo false)" '{enabled:$enabled}' ;;
+  "") if enabled; then turn_off; else turn_on; fi ;;
+  *) echo "Usage: omarchy-toggle-bridge [on|off|--status]" >&2; exit 1 ;;
+esac

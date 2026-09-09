@@ -235,3 +235,18 @@ selected-border         = "{{ accent }}"
 selected-border-alpha   = 1.0
 unselected-border       = "{{ foreground }}"
 unselected-border-alpha = 0.28
+
+# monarchy: the bridge console bar (shell/plugins/bridge, id monarchy.bridge).
+# Colours accept the same role names and hex values as the sections above.
+[bridge]
+width              = 240
+inset              = 14
+slot-height        = 38
+tab-height         = 32
+tab-gap            = 6
+tab-radius         = 16
+tab-inactive-inset = 12
+tab-active         = "{{ accent }}"
+tab-active-text    = "{{ background }}"
+tab-inactive       = "{{ foreground }}"
+tab-inactive-alpha = 0.12

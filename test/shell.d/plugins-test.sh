@@ -109,7 +109,8 @@ for (const manifestPath of manifests) {
     check(typeof manifest[field] === 'string' && manifest[field].length > 0, `${manifest.id || relativePath} must have ${field}`)
   }
 
-  check(String(manifest.id).startsWith('omarchy.'), `${manifest.id} must use the first-party namespace`)
+  // monarchy: Monarchy's own first-party plugins use the monarchy.* namespace (D003).
+  check(String(manifest.id).startsWith('omarchy.') || String(manifest.id).startsWith('monarchy.'), `${manifest.id} must use the first-party namespace`)
   check(!String(manifest.id).includes('/') && !String(manifest.id).includes('..'), `${manifest.id} must be safe as a plugin id`)
   check(!ids.has(manifest.id), `${manifest.id} must be unique`)
   ids.add(manifest.id)

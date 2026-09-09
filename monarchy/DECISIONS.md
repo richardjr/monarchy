@@ -56,7 +56,23 @@ Dated, append-only. Newest at the bottom. Each entry: context, decision, consequ
 
 **Alternatives.** quickemu (AUR, less control over devices); raw QEMU scripts (no snapshots or GUI without extra work).
 
+## 2026-09-09 — D008: Bridge console design, tab rule and logo
+
+**Context.** Phase 1 needed a concrete target before any config or QML. Twenty lettered options (A–T) were sketched on the "Bridge Console" design canvas across three rounds: four layout directions, three variants of the chosen one, four focus-state and tiling studies, and nine logo marks. Two review passes checked each round against the naming-and-IP rules.
+
+**Decision.**
+- Layout: option P. Hyprland master layout, orientation left, master count 2 (two windows in the left column, stack on the right). A 240 px labelled panel down the left edge; the left-column windows abut it with no gap.
+- Panel contents, top to bottom: a reserved top slot for the focused window's tab; the logo and wordmark; clock; workspace/window tabs with rounded outer ends; a spacer; system meters; an agents block.
+- Every window carries a 32 px title band with a chamfered far end. The focused window's band and border take the accent; the others are dim.
+- Tab rule, hybrid: the focused window's tab rises to the top slot. When the focused window abuts the panel, its band is joined to the tab directly. Otherwise the link is colour only; no accent is drawn along the top of the screen.
+- Logo: option L, a geometric M with a chamfered crown point in the accent, shown beside the wordmark in the panel header.
+- Geometry rule: joins between panel pieces are square or chamfered, never quarter-round; segment and tab rounding is confined to outer ends. This is the line that keeps the design clear of the well-known franchise panel look.
+
+**Consequences.** Implementation notes from the first cut (2026-09-09): the panel is `shell/plugins/bridge/` (`monarchy.bridge`), a marked fork of the stock bar engine with three bridge widgets (`monarchy.focus-tab`, `monarchy.header`, `monarchy.tabs`) and a `[bridge]` section in `shell.toml.tpl`; the layout is `default/hypr/looknfeel.lua` with `gaps_out = { top, right, bottom, left }` (the named-key table is the only form Hyprland's Lua config accepts for per-side gaps). The shipped `config/omarchy/shell.json` stays stock, because upstream's tests pin its layout; `omarchy toggle bridge` plus a migration select the bridge per user instead. `test/shell.d/plugins-test.sh` is relaxed to accept the `monarchy.` namespace. The window title bands are not something Hyprland draws; the first implementation is expected to be Quickshell overlay surfaces aligned to window geometry from the Hyprland IPC, which is the "active-window indicator aligned to the focused window" item already in the roadmap. If that proves unworkable, a Hyprland decoration plugin is the fallback and would bring D006's pinning question forward. Fonts used on the canvas (Chakra Petch, IBM Plex Mono; both OFL) are a proposal only; the theme's `[font]` keys decide, and a font decision is still open.
+
+**Alternatives.** A · Spine (72 px rail, closest to config-only); B · Console without rounding or the rising tab; F · Band with a title band that also ran across the screen (rejected on IP grounds); a conduit along the top edge for non-adjacent windows (M, rejected for the same reason); aligned-tab-only rule (O, re-orders the tab list on every focus change).
+
 ## Open
 
 - Monarch's first non-coding capabilities beyond the read-only set in the roadmap.
-- Font for Phosphor.
+- Font for Phosphor (canvas proposal: Chakra Petch + IBM Plex Mono, both OFL).

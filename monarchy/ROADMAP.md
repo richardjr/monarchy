@@ -18,7 +18,9 @@ Done when the edit → push → pull-in-VM → `omarchy-restart-shell` loop take
 
 ## Phase 1 — Bridge console
 
-The brief's three steps survive, with "CSS" becoming "QML" because Omarchy 4 has no Waybar.
+The brief's three steps survive, with "CSS" becoming "QML" because Omarchy 4 has no Waybar. Target design decided 2026-09-09 (D008): design canvas "Bridge Console", option P with the hybrid tab rule and logo L.
+
+Status 2026-09-09: steps 1 and 2 have a first cut running in the VM (panel, header with logo, focus tab, workspace tabs, stock widgets; `omarchy toggle bridge`). Open: window title bands and the hybrid join (Quickshell overlays aligned to window geometry), system meters, theme keys beyond `[bridge]` sizes and colours, and a stray "another handler is registered for target omarchy.bar" warning at shell start with a plugin bar selected.
 
 1. **Config only.** In the fork's `default/hypr/looknfeel.lua`: `general.layout = "master"`, `master.orientation = "left"`, `mfact` tuned, `gaps_out` reduced to zero on the panel side so the master window abuts the panel, active border colour driven by the theme. Live with it before drawing anything.
 2. **Panel.** A new first-party bar plugin at `shell/plugins/bridge/` with id `monarchy.bridge` and `kind: "bar"`, forked from `omarchy.bar`. Left-anchored, wider than the stock 28 px vertical bar, coloured segment blocks, elbows drawn in QML, and an active-window indicator aligned to the focused window's geometry via Quickshell's Hyprland module. `config/omarchy/shell.json` defaults select it. Stock widgets (workspaces, clock, audio, agents, tray) are reused, not rewritten.

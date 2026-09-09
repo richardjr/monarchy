@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "monarchy.focus-tab",
+  "name": "Focus tab",
+  "version": "0.1.0",
+  "author": "Monarchy",
+  "description": "Reserved top slot showing the focused window as an accent tab",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "FocusTab.qml" },
+  "barWidget": {
+    "displayName": "Focus tab",
+    "description": "The focused window's tab in the bridge's top slot",
+    "category": "Compositor",
+    "allowMultiple": false
+  }
+}

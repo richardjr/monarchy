@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "monarchy.tabs",
+  "name": "Workspace tabs",
+  "version": "0.1.0",
+  "author": "Monarchy",
+  "description": "Labelled workspace tabs with rounded outer ends",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "Tabs.qml" },
+  "barWidget": {
+    "displayName": "Workspace tabs",
+    "description": "Labelled workspace tabs; the focused one takes the accent",
+    "category": "Compositor",
+    "allowMultiple": false
+  }
+}

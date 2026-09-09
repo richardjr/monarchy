@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "monarchy.header",
+  "name": "Header",
+  "version": "0.1.0",
+  "author": "Monarchy",
+  "description": "Monarchy logo, wordmark and current theme",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "Header.qml" },
+  "barWidget": {
+    "displayName": "Monarchy header",
+    "description": "Logo, wordmark and current theme name",
+    "category": "Info",
+    "allowMultiple": false
+  }
+}
