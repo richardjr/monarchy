@@ -16,7 +16,10 @@ hl.config({
 
     resize_on_border = false,
     allow_tearing = false,
-    layout = "dwindle",
+    -- monarchy: bridge console layout (D008): master column on the left, two
+    -- masters, and no outer gap on the panel side so the left column abuts it.
+    layout = "master",
+    gaps_out = { top = 10, right = 10, bottom = 10, left = 0 },
   },
 
   decoration = {
@@ -100,6 +103,10 @@ hl.config({
 
   master = {
     new_status = "master",
+    -- monarchy: D008 layout
+    orientation = "left",
+    mfact = 0.6,
+    slave_count_for_center_master = 0,
   },
 
   misc = {
