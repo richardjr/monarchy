@@ -8,10 +8,11 @@ Phase numbering here supersedes the brief. Each phase has a "done when" so it ca
 
 - [x] Public fork `richardjr/monarchy` of `omacom/omarchy`; `main` based on tag `v4.0.2`, the exact commit the installed 4.0.2 packages were built from.
 - [x] VM stack chosen and scripted: libvirt + virt-manager, `monarchy/vm/create.sh`, runbook in [`vm/README.md`](vm/README.md) (D007). Stock 4.0.2 installed twice from the official ISO on the laptop, proving the script.
-- [ ] Per dev machine (laptop, desktop): run [`vm/README.md`](vm/README.md) sections 1 to 4 through to the `stock-4.0.2` restore point. Laptop status on 2026-09-08: VM installed, guest bootstrap not yet run.
-- [ ] In the VM: `omarchy dev link ~/monarchy` over the share (runbook section 5). `omarchy version` must print `dev (<sha>)`; `./test/all` must be green; the desktop must be indistinguishable from stock.
-- [ ] Screenshot loop: `omarchy capture screenshot fullscreen save` inside the VM, copied to the host for inspection (runbook section 6).
-- [ ] Prove the upstream merge path once: merge the next upstream tag into `main` in a scratch branch and run the tests.
+- [ ] Per dev machine (laptop, desktop): run [`vm/README.md`](vm/README.md) sections 1 to 4 through to the `stock-4.0.2` restore point. Desktop done 2026-09-09 (NVIDIA host, so a software-rendered guest; see D007). Laptop status on 2026-09-08: VM installed, guest bootstrap not yet run; re-run the bootstrap there, it gained passwordless sudo and the test-dependency clones.
+- [x] In the VM: `omarchy dev link ~/monarchy` over the share (runbook section 5). Desktop 2026-09-09: `omarchy version` prints `dev (1566f10c)`, `./test/all` passes all 210 files, desktop screenshot matches stock.
+- [x] Screenshot loop: `omarchy capture screenshot fullscreen save` inside the VM, copied to the host for inspection (runbook section 6). Proven on the desktop 2026-09-09.
+- [ ] Prove the upstream merge path once: merge the next upstream tag into `main` in a scratch branch and run the tests. `v4.0.3` exists and is a fast-forward of `v4.0.2`, so it is the candidate.
+- [ ] Optional: unattended VM installs via the ISO's `cidata` path (`manual/51-unattended-installs.md`) to replace the hand-driven configurator on rebuilds.
 
 Done when the edit → push → pull-in-VM → `omarchy-restart-shell` loop takes under a minute and the dev-linked VM behaves exactly like stock.
 

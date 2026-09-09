@@ -5,9 +5,14 @@
 # file, because the guest is re-created and restored often and its host key
 # changes each time; `monarchy/vm/snapshot.sh restore` wipes that file.
 #
-# Usage: monarchy/vm/ssh.sh [command ...]
+# Usage: monarchy/vm/ssh.sh [ssh options] [command ...]
 #        monarchy/vm/ssh.sh --ip          print the guest address only (for scp etc.)
 #   MONARCHY_VM_USER overrides the guest user (default: the host user name).
+#
+# A command is run through a login shell in the guest so /etc/profile sources
+# /etc/omarchy.conf, which is where `omarchy dev link` puts OMARCHY_PATH. Over
+# a plain ssh command that file is never read and `omarchy version` reports the
+# installed package rather than the link.
 
 set -euo pipefail
 
@@ -33,4 +38,10 @@ if [[ ${1:-} == "--ip" ]]; then
   exit 0
 fi
 
-exec ssh -i "$KEY" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile="$KNOWN_HOSTS" -o ConnectTimeout=10 "$GUEST_USER@$ip" "$@"
+ssh_opts=()
+while [[ ${1:-} == -o ]]; do ssh_opts+=("$1" "$2"); shift 2; done
+
+if (( $# == 0 )); then
+  exec ssh -i "$KEY" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile="$KNOWN_HOSTS" -o ConnectTimeout=10 "${ssh_opts[@]}" "$GUEST_USER@$ip"
+fi
+exec ssh -i "$KEY" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile="$KNOWN_HOSTS" -o ConnectTimeout=10 "${ssh_opts[@]}" "$GUEST_USER@$ip" bash -lc "$(printf '%q ' "$*")"

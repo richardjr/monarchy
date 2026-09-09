@@ -13,6 +13,12 @@
 #   3. Enables sshd, opens the firewall and authorizes the host's VM key using
 #      Omarchy's own omarchy-setup-security-sshd, reading the public key from
 #      monarchy/vm/local/authorized_keys on the share (git-ignored on the host).
+#   4. Clones omacom/omarchy-pkgs and omacom/omarchy-iso beside the share when
+#      missing; four of the shell tests read them and fail without them.
+#   5. Grants the desktop user passwordless sudo. The host drives `omarchy dev
+#      link`, reboots and package installs over SSH, where sudo has no terminal
+#      to ask on. This is a throwaway VM behind NAT with key-only SSH; do not
+#      copy this step to a real machine.
 #
 # It deliberately does NOT run `omarchy dev link`; take the base snapshot first
 # (monarchy/vm/snapshot.sh save base-4.0.2 on the host), then link.
@@ -44,6 +50,24 @@ if [[ ! -f $POWER_CONF ]]; then
   sudo systemctl kill -s HUP systemd-logind.service 2>/dev/null || true
 else
   echo "Power button override already present."
+fi
+
+for repo in omarchy-pkgs omarchy-iso; do
+  if [[ ! -d $HOME/$repo/.git ]]; then
+    echo "Cloning $repo for the test suite..."
+    git clone -q "https://github.com/omacom/$repo" "$HOME/$repo"
+  else
+    echo "$repo already present."
+  fi
+done
+
+SUDOERS=/etc/sudoers.d/20-monarchy-vm-nopasswd
+if [[ ! -f $SUDOERS ]]; then
+  echo "Granting $USER passwordless sudo (dev VM only)..."
+  printf '%s ALL=(ALL:ALL) NOPASSWD: ALL\n' "$USER" | sudo install -Dm440 /dev/stdin "$SUDOERS"
+  sudo visudo -cf "$SUDOERS" >/dev/null
+else
+  echo "Passwordless sudo already present."
 fi
 
 if [[ ! -s $KEYS ]]; then

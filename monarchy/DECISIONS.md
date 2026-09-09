@@ -52,7 +52,7 @@ Dated, append-only. Newest at the bottom. Each entry: context, decision, consequ
 
 **Decision.** libvirt system instance with virt-manager for the console. One VM, `monarchy-dev`, defined by `monarchy/vm/create.sh`; full runbook in `monarchy/vm/README.md`.
 
-**Consequences.** Three host-side facts had to be worked around and are now scripted or documented: Omarchy's ufw drops libvirt guests' DHCP unless `ufw allow in on virbr0` is added; stock Omarchy ignores the ACPI power button, so the guest bootstrap adds a VM-only logind override; Arch's edk2 has only raw firmware descriptors, so the NVRAM is raw and restore points are volume clones rather than libvirt internal snapshots. SPICE GL is kept for a usable Hyprland, at the cost of host-side `virsh screenshot`.
+**Consequences.** Three host-side facts had to be worked around and are now scripted or documented: Omarchy's ufw drops libvirt guests' DHCP unless `ufw allow in on virbr0` is added; stock Omarchy ignores the ACPI power button, so the guest bootstrap adds a VM-only logind override; Arch's edk2 has only raw firmware descriptors, so the NVRAM is raw and restore points are volume clones rather than libvirt internal snapshots. SPICE GL is kept for a usable Hyprland, at the cost of host-side `virsh screenshot`. 2026-09-09: GL is unavailable to QEMU on the desktop's proprietary NVIDIA driver, so `create.sh` detects that and builds a software-rendered 2D virtio-gpu VM there; the laptop keeps GL.
 
 **Alternatives.** quickemu (AUR, less control over devices); raw QEMU scripts (no snapshots or GUI without extra work).
 

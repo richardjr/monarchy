@@ -15,6 +15,12 @@
 # Hyprland renders on the host GPU; a side effect is that `virsh screenshot`
 # has no surface to dump, so take screenshots inside the guest instead.
 #
+# GL is skipped on hosts running the proprietary NVIDIA driver: QEMU's EGL
+# render-node init fails there (EGL_NOT_INITIALIZED) and the driver has no
+# dmabuf export for SPICE anyway. The guest then renders in software on a 2D
+# virtio-gpu, which upstream's own ISO harness targets. Override the detection
+# with MONARCHY_VM_GL=1 or MONARCHY_VM_GL=0.
+#
 # NVRAM is raw because Arch's edk2-ovmf ships only raw firmware descriptors,
 # which rules out libvirt internal snapshots. Use `virsh vol-clone --reflink`
 # in the images pool for stock/restore points instead (see README.md).
@@ -30,6 +36,18 @@ DISK_SIZE_GB=64
 MEMORY_MB=8192
 VCPUS=6
 REPO_ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)
+
+if [[ -z ${MONARCHY_VM_GL:-} ]]; then
+  if grep -qE '^nvidia ' /proc/modules; then MONARCHY_VM_GL=0; else MONARCHY_VM_GL=1; fi
+fi
+if (( MONARCHY_VM_GL )); then
+  GRAPHICS="spice,listen=none,gl.enable=yes"
+  VIDEO="model.type=virtio,model.acceleration.accel3d=yes"
+else
+  echo "Host GL unavailable to QEMU (NVIDIA driver or MONARCHY_VM_GL=0); guest will render in software."
+  GRAPHICS="spice,listen=none"
+  VIDEO="model.type=virtio"
+fi
 
 if virsh -c "$CONNECT" dominfo "$NAME" >/dev/null 2>&1; then
   echo "$NAME already exists; nothing to do."
@@ -55,8 +73,8 @@ virt-install --connect "$CONNECT" \
   --disk "path=$DISK,size=$DISK_SIZE_GB,format=qcow2,bus=virtio,discard=unmap" \
   --cdrom "$ISO" \
   --network network=default,model=virtio \
-  --graphics spice,listen=none,gl.enable=yes \
-  --video model.type=virtio,model.acceleration.accel3d=yes \
+  --graphics "$GRAPHICS" \
+  --video "$VIDEO" \
   --sound none --channel spicevmc --rng /dev/urandom \
   --memorybacking source.type=memfd,access.mode=shared \
   --filesystem "source.dir=$REPO_ROOT,target.dir=monarchy,driver.type=virtiofs" \
