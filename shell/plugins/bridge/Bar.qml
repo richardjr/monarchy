@@ -1015,6 +1015,21 @@ Item {
     }
   }
 
+  // monarchy: window title bands (D008), one click-through overlay per
+  // screen, drawn in the strip Hyprland reserves above each tiled window.
+  Variants {
+    model: Quickshell.screens
+
+    delegate: Component {
+      Bands {
+        required property var modelData
+
+        bar: root
+        bandScreen: modelData
+      }
+    }
+  }
+
   component BarPanel: PanelWindow {
     id: barWindow
 
@@ -1163,7 +1178,9 @@ Item {
 
         LeftModules {
           anchors.top: parent.top
-          anchors.topMargin: Style.space(8)
+          // monarchy: no top inset, so the focus tab's slot starts at the
+          // screen edge and its bottom lines up with the window bands (D008).
+          anchors.topMargin: 0
           anchors.horizontalCenter: parent.horizontalCenter
         }
 

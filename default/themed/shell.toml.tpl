@@ -250,3 +250,15 @@ tab-active         = "{{ accent }}"
 tab-active-text    = "{{ background }}"
 tab-inactive       = "{{ foreground }}"
 tab-inactive-alpha = 0.12
+# Window title bands drawn above every tiled window; band-height must match
+# the strip reserved by the gaps in default/hypr/looknfeel.lua, band-border
+# Hyprland's general.border_size.
+band-height              = 32
+band-chamfer             = 16
+band-border              = 2
+band-active              = "{{ accent }}"
+band-active-text         = "{{ background }}"
+band-inactive            = "{{ foreground }}"
+band-inactive-alpha      = 0.12
+band-inactive-text       = "{{ foreground }}"
+band-inactive-text-alpha = 0.6

@@ -16,3 +16,12 @@ function workspaceLabel(workspace, id) {
   }
   return title ? String(id) + " · " + title : String(id)
 }
+
+// Opaque blend of `over` at `alpha` on top of `under`, for fills that sit on
+// the wallpaper rather than the panel and would otherwise wash out.
+function blend(under, over, alpha) {
+  var a = Math.max(0, Math.min(1, Number(alpha)))
+  return Qt.rgba(under.r * (1 - a) + over.r * a,
+                 under.g * (1 - a) + over.g * a,
+                 under.b * (1 - a) + over.b * a, 1)
+}

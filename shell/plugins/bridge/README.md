@@ -12,6 +12,16 @@ design canvas.
   manifest: `monarchy.focus-tab` (the reserved top slot showing the focused
   window), `monarchy.header` (logo, wordmark, theme name) and `monarchy.tabs`
   (labelled workspace tabs with rounded outer ends).
+- `Bands.qml` draws the window title bands: one click-through overlay per
+  screen, on the Top layer, placing a 32 px band with a chamfered far end in
+  the strip Hyprland reserves above every tiled window (the per-side gaps in
+  `default/hypr/looknfeel.lua`). Geometry comes from the Hyprland IPC
+  toplevels; focus comes from the Wayland toplevel handle. The focused
+  window's band takes the accent and, when the window abuts the panel, meets
+  the focus tab at the panel's inner edge (the D008 hybrid rule); otherwise
+  the link is colour only. Left click focuses the window, middle click
+  closes it. Hyprland emits no resize event, so the overlay refreshes on the
+  events that reshape a workspace and re-reads geometry once a second.
 - Sizes and colours come from the `[bridge]` section of the theme's
   `shell.toml` (see `default/themed/shell.toml.tpl`).
 

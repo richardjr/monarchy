@@ -18,8 +18,12 @@ hl.config({
     allow_tearing = false,
     -- monarchy: bridge console layout (D008): master column on the left, two
     -- masters, and no outer gap on the panel side so the left column abuts it.
+    -- Every tiled window reserves a 32 px strip above itself for the title band
+    -- the bridge draws (shell/plugins/bridge/Bands.qml, bridge.band-height in
+    -- shell.toml): 32 + 5 above stacked windows, 32 + 6 at the top edge.
     layout = "master",
-    gaps_out = { top = 10, right = 10, bottom = 10, left = 0 },
+    gaps_in = { top = 37, right = 5, bottom = 5, left = 5 },
+    gaps_out = { top = 38, right = 0, bottom = 0, left = 0 },
   },
 
   decoration = {
