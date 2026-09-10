@@ -262,3 +262,11 @@ band-inactive            = "{{ foreground }}"
 band-inactive-alpha      = 0.12
 band-inactive-text       = "{{ foreground }}"
 band-inactive-text-alpha = 0.6
+# System meters block (cpu, mem, updates).
+meter-height      = 6
+meter-gap         = 8
+meter-fill        = "{{ accent }}"
+meter-track       = "{{ foreground }}"
+meter-track-alpha = 0.12
+meter-text        = "{{ foreground }}"
+meter-text-alpha  = 0.6

@@ -29,8 +29,8 @@ bridge_bar='{
     ],
     "center": [],
     "right": [
+      { "id": "monarchy.meters" },
       { "id": "omarchy.indicators" },
-      { "id": "omarchy.system-update" },
       { "id": "omarchy.tray" },
       { "id": "omarchy.agents" },
       { "id": "omarchy.bluetooth" },
@@ -65,9 +65,20 @@ write_config() {
   fi
 }
 
+current_matches() {
+  jq -e --argjson bridge "$bridge_bar" '.bar == $bridge' "$CONFIG" >/dev/null 2>&1
+}
+
 turn_on() {
   if enabled; then
-    echo "Bridge console already selected."
+    # Rewrite when the stored block has drifted from this command's, so a
+    # user already on the bridge picks up widgets added to it later.
+    if current_matches; then
+      echo "Bridge console already selected."
+    else
+      write_config '.bar = $bridge'
+      echo "Bridge console layout refreshed."
+    fi
     return
   fi
   write_config '.bar = $bridge'

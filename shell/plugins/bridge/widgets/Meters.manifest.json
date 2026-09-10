@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "monarchy.meters",
+  "name": "System meters",
+  "version": "0.1.0",
+  "author": "Monarchy",
+  "description": "cpu, memory and pending update count as label rows with thin bars",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "Meters.qml" },
+  "barWidget": {
+    "displayName": "System meters",
+    "description": "cpu and memory bars plus the pending Omarchy update count",
+    "category": "System",
+    "allowMultiple": false
+  }
+}
