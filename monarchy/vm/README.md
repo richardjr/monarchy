@@ -96,7 +96,7 @@ In the guest, open a terminal (Super+Return) and run one line:
 mkdir -p $HOME/monarchy && sudo mount -t virtiofs monarchy $HOME/monarchy && $HOME/monarchy/monarchy/vm/guest-bootstrap.sh && systemctl poweroff
 ```
 
-The bootstrap adds the share to `/etc/fstab` so it mounts at boot on `~/monarchy`, drops a logind override so the virtual power button powers the guest off (stock Omarchy ships `HandlePowerKey=ignore`, which also swallows `virsh shutdown`), clones `omarchy-pkgs` to `~/omarchy-pkgs` for the packaging tests, grants the desktop user passwordless sudo (the host drives `omarchy dev link` and reboots over SSH, where sudo cannot prompt; acceptable only because this is a throwaway NAT-ed VM with key-only SSH), and runs Omarchy's own `omarchy-setup-security-sshd --key=...` with the key from `local/authorized_keys`, which enables sshd, rate-limits port 22 in ufw and disables password logins. It prints the guest's address and does not dev-link anything. The one-liner ends by powering off so the next step can snapshot a clean disk.
+The bootstrap adds the share to `/etc/fstab` so it mounts at boot on `~/monarchy`, drops a logind override so the virtual power button powers the guest off (stock Omarchy ships `HandlePowerKey=ignore`, which also swallows `virsh shutdown`), restores SDDM autologin (Omarchy removes it after the first boot of an unencrypted install, and a guest parked at the greeter has no desktop session to drive over SSH), clones `omarchy-pkgs` to `~/omarchy-pkgs` for the packaging tests, grants the desktop user passwordless sudo (the host drives `omarchy dev link` and reboots over SSH, where sudo cannot prompt; acceptable only because this is a throwaway NAT-ed VM with key-only SSH), and runs Omarchy's own `omarchy-setup-security-sshd --key=...` with the key from `local/authorized_keys`, which enables sshd, rate-limits port 22 in ufw and disables password logins. It prints the guest's address and does not dev-link anything. The one-liner ends by powering off so the next step can snapshot a clean disk.
 
 Stock Omarchy has no clipboard sharing with the console (no spice-vdagent), so the one-liner has to be typed. `$HOME` is used rather than `~` on purpose: typed into a UK-layout guest, `~` lands on a different key.
 
@@ -165,6 +165,10 @@ monarchy/vm/create.sh                  # start again from section 2
 Never `virsh undefine --remove-all-storage` on this domain: the ISO sits in the same pool and would be deleted with it.
 
 ## Notes and gotchas collected while building this
+
+- `omarchy-setup-security-sshd` rate-limits port 22 in ufw (six new connections per 30 s from one address). Polling the guest with back-to-back `ssh.sh` calls trips it and every connection is refused for a while. Batch work into one connection per step: run the screenshot and `base64 -w0` of the file in the same `ssh.sh` call and decode on the host, rather than `ssh` then `scp`.
+- Hyprland here is configured in Lua, so `hyprctl dispatch` takes dispatcher calls (`hl.dsp.focus({ window = "address:0x..." })`), not the classic `focuswindow address:...` form, and `hyprctl keyword` is refused ("Use eval"): change options at runtime with `hyprctl eval 'hl.config({ general = { ... } })'` and `hyprctl reload` to go back to the files.
+- Omarchy 4's terminal is foot; `omarchy-launch-terminal` opens one. There is no alacritty in the guest.
 
 - `omarchy dev link` covers `bin/`, `default/`, `shell/`, `themes/`, `applications/` and `config/`. Fixed system paths (`/etc`, systemd units, plymouth, sddm) still come from the installed package; `omarchy dev pkg-test` builds those from a checkout when needed.
 - While linked, `omarchy update` inside the guest runs `git pull --ff-only` on `~/monarchy`, which is the host checkout through the share. Harmless, but be aware of it.

@@ -10,6 +10,9 @@
 #   2. Lets the virtual power button shut the guest down. Omarchy ships
 #      HandlePowerKey=ignore for real machines, which also swallows the ACPI
 #      event `virsh shutdown` sends; a later logind drop-in overrides it here.
+#      Also restores SDDM autologin, which Omarchy removes after the first
+#      boot of an unencrypted install; without it every reboot stops at the
+#      greeter and no desktop session exists for the host to drive.
 #   3. Enables sshd, opens the firewall and authorizes the host's VM key using
 #      Omarchy's own omarchy-setup-security-sshd, reading the public key from
 #      monarchy/vm/local/authorized_keys on the share (git-ignored on the host).
@@ -50,6 +53,18 @@ if [[ ! -f $POWER_CONF ]]; then
   sudo systemctl kill -s HUP systemd-logind.service 2>/dev/null || true
 else
   echo "Power button override already present."
+fi
+
+# Omarchy removes its first-boot SDDM autologin on unencrypted installs, so a
+# rebooted guest sits at the greeter and the host cannot reach the desktop
+# session over SSH. Put the same drop-in back permanently; this VM is the
+# auth boundary equivalent of the LUKS prompt on a real install.
+AUTOLOGIN_CONF=/etc/sddm.conf.d/autologin.conf
+if [[ ! -f $AUTOLOGIN_CONF ]]; then
+  echo "Enabling SDDM autologin for $USER..."
+  printf '[Autologin]\nUser=%s\nSession=omarchy.desktop\n' "$USER" | sudo install -Dm644 /dev/stdin "$AUTOLOGIN_CONF"
+else
+  echo "SDDM autologin already present."
 fi
 
 for repo in omarchy-pkgs omarchy-iso; do
