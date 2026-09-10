@@ -4,6 +4,17 @@ The [founding brief](BRIEF.md) revised against Omarchy 4 ("Quattro"). Omarchy 4 
 
 Phase numbering here supersedes the brief. Each phase has a "done when" so it can be closed honestly.
 
+## Current plan (2026-09-10)
+
+Phase 1's first "done when" is met: the VM screenshot shows the panel, the focus tab and the focused window's band as one joined shape. The second, a week of daily use, has not started because the bridge only runs in the VM. Next, in order:
+
+1. **Master count 2** (Monarch). The last unimplemented piece of D008. Hyprland has no config key for it, so either a startup `layoutmsg addmaster` rule in `default/hypr/looknfeel.lua` or a keybinding; startup rule preferred. Record the choice in `DECISIONS.md`, verify with three windows in the VM.
+2. **Prove the upstream merge path** (Monarch). `v4.0.3` is a fast-forward of `v4.0.2` with 40 commits. Merge it in a scratch branch, re-check every `monarchy:` marker and the file table in `AGENTS.md`, run `./test/all` in the guest. Land it on `main` if clean. This closes the last non-optional phase 0 box on the desktop.
+3. **Daily use on a real machine** (operator). `omarchy dev link` this checkout on the desktop or laptop, `omarchy toggle bridge on`, and live with it. Annoyances found in the first days feed back before Phosphor is built on top. Closes phase 1.
+4. **Phosphor** (blocked on the operator's font decision). The canvas proposal is Chakra Petch plus IBM Plex Mono, both OFL. Once chosen, build `themes/phosphor/`, record the font and licence in `DECISIONS.md`, and check every `default/themed/` template renders.
+
+Still open behind these: the laptop VM bootstrap (phase 0), and the "another handler is registered for target omarchy.bar" warning, which reproduces with the stock bar selected and is therefore upstream's.
+
 ## Phase 0 — Repo and VM baseline
 
 - [x] Public fork `richardjr/monarchy` of `omacom/omarchy`; `main` based on tag `v4.0.2`, the exact commit the installed 4.0.2 packages were built from.
